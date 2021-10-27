@@ -15,6 +15,15 @@ scipy             1.6.3
 torch             1.8.1
 ```
 
+# Badges
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/yformer-u-net-inspired-transformer-1/time-series-forecasting-on-etth2-720)](https://paperswithcode.com/sota/time-series-forecasting-on-etth2-720?p=yformer-u-net-inspired-transformer-1)
+
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/yformer-u-net-inspired-transformer-1/time-series-forecasting-on-etth2-24)](https://paperswithcode.com/sota/time-series-forecasting-on-etth2-24?p=yformer-u-net-inspired-transformer-1)
+
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/yformer-u-net-inspired-transformer-1/time-series-forecasting-on-etth1-720)](https://paperswithcode.com/sota/time-series-forecasting-on-etth1-720?p=yformer-u-net-inspired-transformer-1)
+
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/yformer-u-net-inspired-transformer-1/time-series-forecasting-on-etth2-168)](https://paperswithcode.com/sota/time-series-forecasting-on-etth2-168?p=yformer-u-net-inspired-transformer-1)
+
 # Citation
 ```
 @article{madhusudhanan2021yformer,

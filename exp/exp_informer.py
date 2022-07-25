@@ -1,6 +1,6 @@
 from data.data_loader import Dataset_ETT_hour, Dataset_ETT_minute, Dataset_Custom, Dataset_Pred, Dataset_ECL_hour
 from exp.exp_basic import Exp_Basic
-from models.model import Informer, Yformer
+from models.model import Informer, Yformer, Yformer_skipless
 
 from utils.tools import EarlyStopping, adjust_learning_rate
 from utils.metrics import metric
@@ -27,9 +27,10 @@ class Exp_Informer(Exp_Basic):
         model_dict = {
             'informer':Informer,
             'yformer':Yformer,
+            'yformer_skipless': Yformer_skipless
 
         }
-        if self.args.model=='informer'or self.args.model=="yformer":
+        if self.args.model=='informer'or self.args.model=="yformer" or self.args.model=="yformer_skipless":
             model = model_dict[self.args.model](
                 self.args.enc_in,
                 self.args.dec_in, 
@@ -171,9 +172,9 @@ class Exp_Informer(Exp_Basic):
         if self.args.use_amp:
             scaler = torch.cuda.amp.GradScaler()
 
-        for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(train_loader):
-            summary(self.model,  [batch_x.shape, batch_x_mark.shape, batch_y.shape, batch_y_mark.shape]) # show the size 
-            break
+        # for i, (batch_x,batch_y,batch_x_mark,batch_y_mark) in enumerate(train_loader):
+        #     summary(self.model,  [batch_x.shape, batch_x_mark.shape, batch_y.shape, batch_y_mark.shape]) # show the size 
+        #     break
 
         for epoch in range(self.args.train_epochs):
             iter_count = 0

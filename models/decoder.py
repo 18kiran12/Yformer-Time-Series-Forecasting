@@ -38,7 +38,7 @@ class DeConvLayer(nn.Module):
         self.upConv = nn.ConvTranspose1d(in_channels=c_in,
                                   out_channels=c_out,
                                   kernel_size=3,
-                                  stride=2,
+                                  stride=3,
                                   padding=2)
         self.norm = nn.BatchNorm1d(c_out)
         self.activation = nn.ELU()
@@ -124,6 +124,61 @@ class YformerDecoderLayer(nn.Module):
         y = self.dropout(self.conv2(y).transpose(-1,1))
 
         return self.norm3(x+y)
+
+class YformerDecoderLayer_skipless(nn.Module):
+    def __init__(self, attention, d_model, d_ff=None, dropout=0.1, activation="relu"):
+        super(YformerDecoderLayer_skipless, self).__init__()
+        d_ff = d_ff or 4*d_model
+        self.attention = attention
+        self.conv1 = nn.Conv1d(in_channels=d_model, out_channels=d_ff, kernel_size=1)
+        self.conv2 = nn.Conv1d(in_channels=d_ff, out_channels=d_model, kernel_size=1)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.dropout = nn.Dropout(dropout)
+        self.activation = F.relu if activation == "relu" else F.gelu
+
+    def forward(self, x, attn_mask=None):
+        new_x, attn = self.attention(
+            x, x, x,
+            attn_mask = attn_mask
+        )
+        x = x + self.dropout(new_x)
+
+        y = x = self.norm1(x)
+        y = self.dropout(self.activation(self.conv1(y.transpose(-1,1))))
+        y = self.dropout(self.conv2(y).transpose(-1,1))
+
+        return self.norm2(x+y), attn
+
+
+class YformerDecoder_skipless(nn.Module):
+    def __init__(self, attn_layers=None, conv_layers=None, norm_layer=None):
+        super(YformerDecoder_skipless, self).__init__()
+        self.attn_layers = nn.ModuleList(attn_layers) if attn_layers is not None else None
+        self.conv_layers = nn.ModuleList(conv_layers) if conv_layers is not None else None
+        self.first_conv = DeConvLayer(c_in=512)
+        self.first_attn = YformerDecoderLayer(AttentionLayer(FullAttention(False), d_model=512, n_heads=8), d_model =512, d_ff = 2048)
+        self.norm = norm_layer
+
+    def forward(self, x_list, fut_x_list, attn_mask=None):
+        # x [B, L, D]
+        attns = []
+        x = x_list.pop(0)
+        fut_x = fut_x_list.pop(0)
+        x = self.first_attn(x, fut_x, cross_mask=attn_mask)
+        x = self.first_conv(x) # upsample to connect with other layers from encoder
+
+        if self.conv_layers is not None:
+            for attn_layer, conv_layer in zip(self.attn_layers, self.conv_layers):
+                x, attn = attn_layer(x, attn_mask=attn_mask)
+                x = conv_layer(x)
+        else:
+            for attn_layer in self.attn_layers:
+                x, attn = attn_layer(x, attn_mask=attn_mask)
+
+        if self.norm is not None: 
+            x = self.norm(x)
+        return x, attns
 
 
 

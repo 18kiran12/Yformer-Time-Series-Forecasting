@@ -3,9 +3,9 @@ import os
 import torch
 
 from exp.exp_informer import Exp_Informer
-parser = argparse.ArgumentParser(description='[Informer] Long Sequences Forecasting')
+parser = argparse.ArgumentParser(description='[Yformer] Long Sequences Forecasting')
 
-parser.add_argument('--model', type=str, required=True, default='informer',help='model of experiment, options: [informer, yformer]')
+parser.add_argument('--model', type=str, required=True, default='yformer',help='model of experiment, options: [informer, yformer, yformer_skipless]')
 
 parser.add_argument('--data', type=str, required=True, default='ETTh1', help='data')
 parser.add_argument('--root_path', type=str, default='./data/ETT/', help='root path of the data file')
@@ -17,7 +17,7 @@ parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='l
 
 parser.add_argument('--seq_len', type=int, default=48, help='input sequence length of Informer encoder')
 parser.add_argument('--label_len', type=int, default=48, help='start token length of Informer decoder')
-parser.add_argument('--pred_len', type=int, default=24, help='prediction sequence length')
+parser.add_argument('--pred_len', type=int, default=336, help='prediction sequence length')
 # Informer decoder input: concat[start token series(label_len), zero padding series(pred_len)]
 
 parser.add_argument('--enc_in', type=int, default=7, help='encoder input size')
@@ -45,7 +45,7 @@ parser.add_argument('--use_decoder_tokens', type=int, default=0 , help='if the d
 parser.add_argument('--num_workers', type=int, default=0, help='data loader num workers')
 parser.add_argument('--itr', type=int, default=2, help='experiments times')
 parser.add_argument('--train_epochs', type=int, default=10, help='train epochs')
-parser.add_argument('--batch_size', type=int, default=4, help='batch size of train input data')
+parser.add_argument('--batch_size', type=int, default=2, help='batch size of train input data')
 parser.add_argument('--patience', type=int, default=3, help='early stopping patience')
 parser.add_argument('--learning_rate', type=float, default=0.0001, help='optimizer learning rate')
 parser.add_argument('--des', type=str, default='test',help='exp description')

@@ -1,8 +1,6 @@
-# Yformer-Time-Series-Forecasting
+# Yformer-Time-Series-Forecasting (ECML 2022)
 
 Paper link: https://arxiv.org/abs/2110.08255
-
-Accepted in ECML 2022
 
 ### Abstract
 
